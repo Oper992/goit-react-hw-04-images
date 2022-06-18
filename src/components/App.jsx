@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -12,36 +12,37 @@ const loaderStyle = {
   paddingTop: '30px',
 };
 
-export class App extends Component {
-  state = {
-    search: '',
-    images: [],
-    totalImages: 0,
-    page: 1,
-    isLoader: false,
-    isModal: false,
-  };
+export function App() {
+  const { search, setSearch } = useState('');
+  const { images, setImages } = useState([]);
+  const { totalImages, setTotalImages } = useState(0);
+  const { page, setPage } = useState(1);
+  const { isLoader, setIsLoader } = useState(false);
 
-  onSubmit = e => {
+  const onSubmit = e => {
     e.preventDefault();
 
-    this.setState({ search: e.target.elements[1].value, page: 1 });
+    setSearch(e.target.elements[1].value);
+    setPage(1);
   };
 
-  handleLoadMore = () => {
-    this.setState(prevState => {
-      return {
-        page: prevState.page + 1,
-        isLoader: true,
-      };
+  const handleLoadMore = () => {
+    setPage(prevPage => {
+      return prevPage + 1;
+    });
+
+    setIsLoader(true);
+
+    window.scrollBy({
+      top: document.body.clientHeight,
+      behavior: 'smooth',
     });
   };
 
-  async componentDidUpdate(prevProps, prevState) {
-    const { search, page } = this.state;
-
-    if (prevState.page !== this.state.page) {
+  useEffect(() => {
+    const addToImagesNextPage = async () => {
       const newImagesArray = await loadMoreImages(search, page);
+
       const newArrayWithDesiredProperties = newImagesArray.hits.map(
         ({ id, webformatURL, largeImageURL }) => {
           return {
@@ -52,25 +53,22 @@ export class App extends Component {
         }
       );
 
-      this.setState(({ images }) => {
-        return {
-          images: [...images, ...newArrayWithDesiredProperties],
-          isLoader: false,
-        };
+      setImages(prevImages => {
+        return [...prevImages, ...newArrayWithDesiredProperties];
       });
-    }
+    };
 
-    if (prevState.images !== this.state.images) {
-      window.scrollBy({
-        top: document.body.clientHeight,
-        behavior: 'smooth',
-      });
-    }
+    addToImagesNextPage();
 
-    if (prevState.search !== search) {
-      this.setState({ isLoader: true });
+    setIsLoader(false);
+  }, [page, search, setImages, setIsLoader]);
 
+  useEffect(() => {
+    setIsLoader(true);
+
+    const addToStateImagesForSearch = async () => {
       const imagesArray = await searchImages(search);
+
       const arrayWithDesiredProperties = imagesArray.hits.map(
         ({ id, webformatURL, largeImageURL }) => {
           return {
@@ -80,31 +78,27 @@ export class App extends Component {
           };
         }
       );
+      setTotalImages(imagesArray.total);
+      setImages(arrayWithDesiredProperties);
+    };
 
-      this.setState({
-        images: arrayWithDesiredProperties,
-        isLoader: false,
-        totalImages: imagesArray.total,
-      });
-    }
-  }
+    addToStateImagesForSearch();
 
-  render() {
-    const { images, isLoader, totalImages } = this.state;
+    setIsLoader(false);
+  }, [search, setImages, setIsLoader, setTotalImages]);
 
-    return (
-      <>
-        <Searchbar onSubmit={this.onSubmit} />
-        {images.length !== 0 && <ImageGallery images={images} />}
-        {isLoader && (
-          <div style={{ ...loaderStyle }}>
-            <Puff color="#00BFFF" height={80} width={80} />
-          </div>
-        )}
-        {images.length !== 0 && images.length !== totalImages && (
-          <Button onClick={this.handleLoadMore} />
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      <Searchbar onSubmit={onSubmit} />
+      {images.length !== 0 && <ImageGallery images={images} />}
+      {isLoader && (
+        <div style={{ ...loaderStyle }}>
+          <Puff color="#00BFFF" height={80} width={80} />
+        </div>
+      )}
+      {images.length !== 0 && images.length !== totalImages && (
+        <Button onClick={handleLoadMore} />
+      )}
+    </>
+  );
 }
