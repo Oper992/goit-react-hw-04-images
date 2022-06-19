@@ -1,54 +1,45 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import style from './ImageGalleryItem.module.css';
 import { Modal } from '../Modal/Modal';
 import PropTypes from 'prop-types';
 
-export default class ImageGalleryItem extends Component {
-  state = {
-    isModal: false,
+export default function ImageGalleryItem({ webformatURL, largeImageURL }) {
+  const [isModal, setIsModal] = useState(false);
+
+  const openModal = e => {
+    setIsModal(true);
   };
 
-  openModal = e => {
-    const modalRef = e.target;
-
-    this.setState({ isModal: true });
-    window.addEventListener('keydown', modalRef);
-  };
-
-  closeModal = e => {
+  const closeModal = e => {
     if (e.target.nodeName === 'DIV') {
-      this.setState({ isModal: false });
+      setIsModal(false);
     }
   };
 
-  closeEsc = e => {
+  const closeEsc = e => {
     if (e.key === 'Escape') {
-      this.setState({ isModal: false });
+      setIsModal(false);
     }
   };
 
-  render() {
-    const { webformatURL, largeImageURL } = this.props;
-
-    return (
-      <>
-        <li className={style.ImageGalleryItem} onClick={this.openModal}>
-          <img
-            className={style['ImageGalleryItem-image']}
-            src={webformatURL}
-            alt=""
-          />
-        </li>
-        {this.state.isModal && (
-          <Modal
-            largeImageURL={largeImageURL}
-            closeModal={this.closeModal}
-            closeEsc={this.closeEsc}
-          />
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      <li className={style.ImageGalleryItem} onClick={openModal}>
+        <img
+          className={style['ImageGalleryItem-image']}
+          src={webformatURL}
+          alt=""
+        />
+      </li>
+      {isModal && (
+        <Modal
+          largeImageURL={largeImageURL}
+          closeModal={closeModal}
+          closeEsc={closeEsc}
+        />
+      )}
+    </>
+  );
 }
 
 ImageGalleryItem.propTypes = {

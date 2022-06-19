@@ -7,7 +7,7 @@ export default function Button({ onClick }) {
       <button
         type="button"
         className={style.Button}
-        onClick={this.props.onClick}
+        onClick={onClick}
       >
         Load more
       </button>
