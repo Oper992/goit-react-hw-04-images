@@ -83,13 +83,14 @@ export function App() {
     if (page > 1) {
       addToImagesNextPage();
 
-      window.scrollBy({
-        top: document.body.clientHeight,
-        behavior: 'smooth',
-      });
-
       console.log('сработал юз ефект загрузить еще');
     }
+    // if (status === 'resolved') {
+    //   window.scrollBy({
+    //     top: document.body.clientHeight,
+    //     behavior: 'smooth',
+    //   });
+    // }
   }, [page, search]);
 
   return (
