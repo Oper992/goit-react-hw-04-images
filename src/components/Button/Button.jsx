@@ -4,11 +4,7 @@ import PropTypes from 'prop-types';
 export default function Button({ onClick }) {
   return (
     <div className={style.containerButton}>
-      <button
-        type="button"
-        className={style.Button}
-        onClick={onClick}
-      >
+      <button type="button" className={style.Button} onClick={onClick}>
         Load more
       </button>
     </div>

@@ -9,6 +9,7 @@ import { Puff } from 'react-loader-spinner';
 const loaderStyle = {
   display: 'flex',
   justifyContent: 'center',
+  marginTop: '30px',
 };
 
 export function App() {
@@ -52,14 +53,6 @@ export function App() {
       setStatus('resolved');
     };
 
-    if (search !== '') {
-      addToStateImagesForSearch();
-
-      console.log('сработал юз ефект поиск');
-    }
-  }, [search]);
-
-  useEffect(() => {
     const addToImagesNextPage = async () => {
       const newImagesArray = await loadMoreImages(search, page);
 
@@ -80,18 +73,27 @@ export function App() {
       setStatus('resolved');
     };
 
+    if (search !== '' && page === 1) {
+      addToStateImagesForSearch();
+
+      console.log('сработал юз ефект поиск');
+    }
+
     if (page > 1) {
       addToImagesNextPage();
 
       console.log('сработал юз ефект загрузить еще');
     }
-    // if (status === 'resolved') {
-    //   window.scrollBy({
-    //     top: document.body.clientHeight,
-    //     behavior: 'smooth',
-    //   });
-    // }
   }, [page, search]);
+
+  useEffect(() => {
+    if (status === 'resolved' && page > 1) {
+      window.scrollBy({
+        top: document.body.clientHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [page, status]);
 
   return (
     <>

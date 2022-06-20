@@ -6,10 +6,6 @@ import PropTypes from 'prop-types';
 export default function ImageGalleryItem({ webformatURL, largeImageURL }) {
   const [isModal, setIsModal] = useState(false);
 
-  const openModal = e => {
-    setIsModal(true);
-  };
-
   const closeModal = e => {
     if (e.target.nodeName === 'DIV') {
       setIsModal(false);
@@ -24,7 +20,7 @@ export default function ImageGalleryItem({ webformatURL, largeImageURL }) {
 
   return (
     <>
-      <li className={style.ImageGalleryItem} onClick={openModal}>
+      <li className={style.ImageGalleryItem} onClick={() => setIsModal(true)}>
         <img
           className={style['ImageGalleryItem-image']}
           src={webformatURL}

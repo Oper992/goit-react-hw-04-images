@@ -1,8 +1,9 @@
 const baseUrl = 'https://pixabay.com/api/';
+const key = '26236897-1332e9e9dbdbc4080cdf2cc84';
 
-export const searchImages = async (search) => {
+export const searchImages = async search => {
   const parameters = new URLSearchParams({
-    key: '26236897-1332e9e9dbdbc4080cdf2cc84',
+    key: key,
     q: search,
     image_type: 'photo',
     per_page: 12,
@@ -21,7 +22,7 @@ export const searchImages = async (search) => {
 
 export const loadMoreImages = async (search, page) => {
   const parameters = new URLSearchParams({
-    key: '26236897-1332e9e9dbdbc4080cdf2cc84',
+    key: key,
     q: search,
     image_type: 'photo',
     per_page: 12,
